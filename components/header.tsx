@@ -1,12 +1,37 @@
 export default function Header() {
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const target = e.target as typeof e.target & {
       email: { value: string };
       password: { value: string };
     };
-    console.log(target.email);
+
+    const user: userType = {
+      email: target.email.value,
+      password: target.password.value,
+    };
+
+    const set = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        query: `query{
+                  user(email:"${user.email}",password:"${user.password}"){
+                    name
+                  }
+        }`,
+      }),
+    };
+
+    try {
+      const res = await fetch(`http://127.0.0.1:4000/graphql`, set);
+      const data = await res.json();
+      console.log(data);
+    } catch (e) {
+      console.log(e);
+    }
   }
+
   return (
     <>
       header
