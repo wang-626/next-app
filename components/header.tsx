@@ -1,23 +1,28 @@
+import { log } from "console";
 import { signIn, signOut, useSession } from "next-auth/react";
 export default function Header() {
   const { data: session, status } = useSession();
   const loading = status === "loading";
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    signIn();
-  }
-  if (session) {
+  if (status === "authenticated") {
     return (
-      <>
-        Signed in as {session.user.email} <br />
-        <button onClick={() => signOut()}>Sign out</button>
-      </>
+      <header>
+        <button
+          onClick={() => signOut()}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Sign out
+        </button>
+      </header>
     );
   }
   return (
-    <>
-      Not signed in <br />
-      <button onClick={() => signIn()}>Sign in</button>
-    </>
+    <header>
+      <button
+        onClick={() => signIn()}
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      >
+        Sign in
+      </button>
+    </header>
   );
 }
