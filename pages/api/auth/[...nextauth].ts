@@ -3,12 +3,13 @@ import GoogleProvider from "next-auth/providers/google";
 import FacebookProvider from "next-auth/providers/facebook";
 import GithubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { fetchSet } from "../../../lib/fetch";
+import { fetchSet } from "lib/fetch";
 
 export const authOptions: NextAuthOptions = {
+  secret: process.env.AUTH_SECRET,
   providers: [
     CredentialsProvider({
-      name: "customCredentials",
+      name: "Email",
       credentials: {
         email: { label: "email", type: "text" },
         password: { label: "Password", type: "password" },
@@ -25,7 +26,6 @@ export const authOptions: NextAuthOptions = {
         try {
           const res = await fetch("http://127.0.0.1:4000/graphql", set);
           const data = await res.json();
-          console.log(data.data);
           if (data) {
             return data.data.user;
           } else {
