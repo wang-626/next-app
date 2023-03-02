@@ -1,7 +1,10 @@
-export function fetchSet(hash: any) {
+export function fetchSet(hash: object) {
   return {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: new Headers({
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    }),
     body: JSON.stringify(hash),
   };
 }
