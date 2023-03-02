@@ -6,12 +6,15 @@ export default function Header() {
   const { authenticated, setAuthenticated } = useContext(AuthContext);
   const router = useRouter();
   const status = "";
+
   function loginRedirect() {
     router.push("user/login");
   }
+
   function logoutRedirect() {
     router.push("api/logout");
   }
+
   if (authenticated) {
     return (
       <header>
@@ -26,6 +29,7 @@ export default function Header() {
       </header>
     );
   }
+
   return (
     <header>
       <button
