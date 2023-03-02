@@ -1,9 +1,9 @@
 import { useRouter } from "next/router";
 import { useContext } from "react";
-import { SessionContext } from "lib/context/session";
+import { AuthContext } from "lib/context/auth";
 
 export default function Header() {
-  const { authenticated, setAuthenticated } = useContext(SessionContext);
+  const { authenticated, setAuthenticated } = useContext(AuthContext);
   const router = useRouter();
   const status = "";
   function loginRedirect() {
