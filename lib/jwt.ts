@@ -7,12 +7,10 @@ export function setJtwCookie({ token }: { token: string }) {
 }
 
 export function verifyJtwCookie(jwtToken: string) {
-  console.log("jwt");
-  
   try {
     const jwtVerify = jwt.verify(jwtToken, process.env.JWT_KEY);
     return jwtVerify;
   } catch {
-    return null;
+    return false;
   }
 }
