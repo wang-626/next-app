@@ -14,22 +14,17 @@ export function AuthContextComponent({ children }: Props) {
 
   const getApiData = async () => {
     const res = await fetch("http://127.0.0.1:3000/api/verifyLoginToken");
-    const data = res.json();
-    data.then((json) => {
-      let user = json.user;
-      if (user) {
-        setAuthenticated(user);
-      }
-    });
+    const json = await res.json();
+    console.log(json);
+
+    if (json.user) {
+      setAuthenticated(json.user);
+    }
   };
 
   useEffect(() => {
     getApiData();
   }, []);
 
-  return (
-    <AuthContext.Provider value={{ authenticated, setAuthenticated }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ authenticated, setAuthenticated }}>{children}</AuthContext.Provider>;
 }
