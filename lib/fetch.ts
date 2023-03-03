@@ -1,10 +1,24 @@
-export function fetchSet(hash: object) {
+export function fetchSet({
+  method = "POST",
+  header = {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+  },
+  body = null,
+}: {
+  method?: string;
+  header?: HeadersInit;
+  body?: object | null;
+}) {
+  if (body) {
+    return {
+      method: method,
+      headers: new Headers(header),
+      body: JSON.stringify(body),
+    };
+  }
   return {
-    method: "POST",
-    headers: new Headers({
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    }),
-    body: JSON.stringify(hash),
+    method: method,
+    headers: new Headers(header),
   };
 }
