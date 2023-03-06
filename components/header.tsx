@@ -8,17 +8,17 @@ export default function Header() {
   const status = "";
 
   function loginRedirect() {
-    router.push("user/login");
+    router.push("//user/login");
   }
 
   function logoutRedirect() {
-    router.push("api/logout");
+    router.push("//api/logout");
   }
 
   if (authenticated) {
     return (
-      <header>
-        {authenticated.email}
+      <header className="flex flex-wrap content-center justify-end py-1">
+        <p className="my-auto">{authenticated.email}</p>
         <button
           onClick={() => logoutRedirect()}
           className="rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700"
@@ -39,10 +39,7 @@ export default function Header() {
       >
         Sign in
       </button>
-      <button
-        className="rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700"
-        aria-label="searchBtn"
-      >
+      <button className="rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700" aria-label="searchBtn">
         Search
       </button>
     </header>
