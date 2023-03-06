@@ -11,7 +11,7 @@ export default async function Auth(severReq: NextApiRequest, severRes: NextApiRe
       let githubApi = new githubFetch(token);
       let user = await githubApi.getUserInf();
       token = await registerUser({ user: user, token: token });
-      severRes.setHeader("Set-Cookie", `loginToken=${setJtwCookie({ token: token })};Max-Age=86400;Path=/api`);
+      severRes.setHeader("Set-Cookie", `loginToken=${setJtwCookie({ token: token })};Max-Age=86400;Path=/`);
     }
   }
   severRes.redirect(307, process.env.SERVER_URL || "http://127.0.0.1:3000");
