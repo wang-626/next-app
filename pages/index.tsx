@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { AuthContext } from "lib/context/auth";
-import Repositories from "components/repositories";
+import Repositories from "components/repositories/repositories";
 import { fetchUserGithubOauth } from "lib/User";
 import { githubFetch } from "lib/githubApi";
 import { verifyJtwCookie } from "lib/jwt";
