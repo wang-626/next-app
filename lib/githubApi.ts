@@ -108,7 +108,10 @@ export class githubFetch {
             repository(name:"${repository}"){
               issues(first:10) {
                 nodes {
-                title
+                  id
+                  number
+                  title
+                  body
                 }
               }
             }
@@ -124,6 +127,48 @@ export class githubFetch {
       let issues = json.data.viewer.repository.issues.nodes;
       if (issues) {
         return issues;
+      }
+      return;
+    }
+    return;
+  }
+
+  async getIssue({ repository, number }: { repository: string; number: string }) {
+    if (this.token) {
+      const body = {
+        query: `query { 
+          viewer { 
+            repository(name:"${repository}"){
+              issue(number:${number}) {
+                author{
+                  login
+                }
+               title
+               number
+               body
+                comments(first:10){
+                  nodes{
+                    author{
+                      login
+                    }
+                    databaseId
+                    body
+                  }
+                }
+              }
+            }
+          }
+        }`,
+      };
+      const header = this.setHeader();
+
+      const set = fetchSet({ body, header });
+      const res = await fetch(graphqlUrl, set);
+      const json = await res.json();
+
+      let issue = json.data.viewer.repository.issue;
+      if (issue) {
+        return issue;
       }
       return;
     }
