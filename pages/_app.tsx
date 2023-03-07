@@ -9,7 +9,7 @@ config.autoAddCss = false;
 export default function App({ Component, pageProps: { message, ...pageProps } }: AppProps) {
   return (
     <AuthContextComponent>
-      <div className="h-screen bg-base-300">
+      <div className="h-screen bg-base-100">
         <div className="container mx-auto ">
           <Header />
           <Component {...pageProps} />
