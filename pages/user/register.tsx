@@ -2,6 +2,8 @@ import { fetchSet } from "lib/fetch";
 import { useRouter } from "next/router";
 import { useContext } from "react";
 import { AuthContext } from "lib/context/auth";
+import img from "public/kitty.png";
+import Image from "next/image";
 
 export default function Register() {
   const { authenticated, setAuthenticated } = useContext(AuthContext);
@@ -43,19 +45,26 @@ export default function Register() {
   }
 
   return (
-    <>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="name">Name:</label>
-        <input type="name" name="name" id="name" defaultValue="123456" />
-
-        <label htmlFor="email">Email:</label>
-        <input type="email" name="email" id="email" defaultValue="test@gmail.com" />
-
-        <label htmlFor="password">Password:</label>
-        <input type="password" name="password" id="password" defaultValue="123456" />
-
-        <button type="submit">Submit</button>
-      </form>
-    </>
+    <div className="h-body flex flex-wrap content-center justify-center ">
+      <div className="w-2/3 rounded-md bg-base-300 px-5 shadow-lg lg:w-1/3 py-10">
+        <Image src={img} alt="Picture of the author" width={100} height={100} className="mx-auto" />
+        <form onSubmit={handleSubmit}>
+          <div className="form-control w-full py-3">
+            <input type="name" placeholder="Name" id="name" className="input w-full py-3" />
+          </div>
+          <div className="form-control w-full py-3">
+            <input type="email" placeholder="Email" id="email" className="input w-full py-3" />
+          </div>
+          <div className="form-control w-full py-3">
+            <input type="password" placeholder="Password" id="password" className="input w-full py-3" />
+          </div>
+          <div className="flex justify-center py-3">
+            <button type="submit" className="btn-primary  btn w-full">
+              Sign up
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 }
