@@ -71,4 +71,107 @@ export class githubFetch {
     }
     return;
   }
+
+  async getRepositories() {
+    if (this.token) {
+      const body = {
+        query: `query { 
+          viewer { 
+            repositories(affiliations:[OWNER],first:10) {
+              nodes{
+                name
+              }
+            }
+          }
+        }`,
+      };
+      const header = this.setHeader();
+
+      const set = fetchSet({ body, header });
+      const res = await fetch(graphqlUrl, set);
+      const json = await res.json();
+
+      let repositories = json.data.viewer.repositories.nodes;
+      if (repositories) {
+        return repositories;
+      }
+      return;
+    }
+    return;
+  }
+
+  async getIssues(repository: string) {
+    if (this.token) {
+      const body = {
+        query: `query { 
+          viewer { 
+            repository(name:"${repository}"){
+              issues(first:10) {
+                nodes {
+                  id
+                  number
+                  title
+                  body
+                }
+              }
+            }
+          }
+        }`,
+      };
+      const header = this.setHeader();
+
+      const set = fetchSet({ body, header });
+      const res = await fetch(graphqlUrl, set);
+      const json = await res.json();
+
+      let issues = json.data.viewer.repository.issues.nodes;
+      if (issues) {
+        return issues;
+      }
+      return;
+    }
+    return;
+  }
+
+  async getIssue({ repository, number }: { repository: string; number: string }) {
+    if (this.token) {
+      const body = {
+        query: `query { 
+          viewer { 
+            repository(name:"${repository}"){
+              issue(number:${number}) {
+                author{
+                  login
+                }
+               title
+               number
+               body
+                comments(first:10){
+                  nodes{
+                    author{
+                      login
+                    }
+                    databaseId
+                    body
+                  }
+                }
+              }
+            }
+          }
+        }`,
+      };
+      const header = this.setHeader();
+
+      const set = fetchSet({ body, header });
+      const res = await fetch(graphqlUrl, set);
+      const json = await res.json();
+
+      let issue = json.data.viewer.repository.issue;
+      if (issue) {
+        return issue;
+      }
+      return;
+    }
+    return;
+  }
 }

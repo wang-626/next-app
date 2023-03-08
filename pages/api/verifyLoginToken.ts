@@ -12,7 +12,7 @@ export default async function Auth(severReq: NextApiRequest, severRes: NextApiRe
     } else {
       severRes.status(200).json({ user: null });
     }
+  } else {
+    severRes.status(200).json({ user: null });
   }
-
-  severRes.status(200).json({ user: null });
 }

@@ -9,7 +9,7 @@ export default async function Auth(severReq: NextApiRequest, severRes: NextApiRe
   };
   const token = await userLogin({ user });
   if (token) {
-    severRes.setHeader("Set-Cookie", `loginToken=${setJtwCookie({ token: token })};Max-Age=86400`);
+    severRes.setHeader("Set-Cookie", `loginToken=${setJtwCookie({ token: token })};Max-Age=86400;Path=/`);
     severRes.status(200).json({ result: true });
   }
 
