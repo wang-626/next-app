@@ -27,7 +27,7 @@ export default function IssueBody({ body, author }: { body: string; author: stri
 
   return (
     <div className="flex justify-between  border-b-2 border-slate-100 py-2 text-lg text-slate-600">
-      <div className="flex w-full flex-col px-5">
+      <div className="flex w-full flex-col px-5 hover:bg-base-300">
         <div className="flex justify-between">
           <div className={`py-2 text-xl`}>{author}</div>
           <div className={`dropdown-left dropdown ${optionsDisplay}`}>

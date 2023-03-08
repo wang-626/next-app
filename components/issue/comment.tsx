@@ -27,7 +27,7 @@ export default function Comment({ comment }: { comment: object }) {
 
   return (
     <div className="flex  justify-between  border-b-2 border-slate-100 py-2 text-lg text-slate-600">
-      <div className="flex  w-full flex-col px-5">
+      <div className="flex  w-full flex-col px-5 hover:bg-base-300">
         <div className="flex justify-between">
           <div className={`py-2 text-xl`}>{comment.author.login}</div>
           <div className={`dropdown-left dropdown ${optionsDisplay}`}>
@@ -41,7 +41,7 @@ export default function Comment({ comment }: { comment: object }) {
             </ul>
           </div>
         </div>
-        <div className={`prose py-2 text-sm ${textDisplay}`}>
+        <div className={`py-2 text-sm prose ${textDisplay}`}>
           <Markdown>{comment.body}</Markdown>
         </div>
         <div className={`${editDisplay}`}>

@@ -10,7 +10,7 @@ export default function Issue({ issue }: { issue: object }) {
   }
 
   return (
-    <div className="flex  justify-between  border-b-2 border-slate-100 py-2 text-lg text-slate-600">
+    <div className="flex  justify-between  border-b-2 border-slate-100 py-2 text-lg text-slate-600 hover:bg-base-300">
       <div className="flex flex-col px-5">
         <div className={`py-2 text-xl`}>
           {issue.title} {" #" + issue.number}

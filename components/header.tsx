@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { useContext } from "react";
 import { AuthContext } from "lib/context/auth";
+import Link from "next/link";
 
 export default function Header() {
   const { authenticated, setAuthenticated } = useContext(AuthContext);
@@ -11,37 +12,47 @@ export default function Header() {
     router.push("//user/login");
   }
 
+  function signUpRedirect() {
+    router.push("//user/register");
+  }
+
   function logoutRedirect() {
     router.push("//api/logout");
   }
 
   if (authenticated) {
     return (
-      <header className="flex flex-wrap content-center justify-end py-1">
-        <p className="my-auto">{authenticated.email}</p>
-        <button
-          onClick={() => logoutRedirect()}
-          className="btn"
-          aria-label="signOutBtn"
-        >
-          Sign out
-        </button>
+      <header className=" h-16  bg-accent py-2">
+        <div className="container mx-auto flex flex-wrap content-center justify-between">
+          <Link href="/" className="my-auto text-xl text-primary">
+            首頁
+          </Link>
+          <div className="flex">
+            <p className="my-auto text-accent-content">{authenticated.email}</p>
+            <button onClick={() => logoutRedirect()} className="btn mx-3" aria-label="signOutBtn">
+              Sign out
+            </button>
+          </div>
+        </div>
       </header>
     );
   }
 
   return (
-    <header>
-      <button
-        onClick={() => loginRedirect()}
-        className="rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700"
-        aria-label="signInBtn"
-      >
-        Sign in
-      </button>
-      <button className="rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700" aria-label="searchBtn">
-        Search
-      </button>
+    <header className=" h-16  bg-accent py-2">
+      <div className="container mx-auto flex flex-wrap content-center justify-between">
+        <Link href="/" className="my-auto text-xl text-primary">
+          首頁
+        </Link>
+        <div>
+          <button onClick={() => loginRedirect()} className="btn-primary btn mx-3" aria-label="signInBtn">
+            Sign in
+          </button>
+          <button onClick={() => signUpRedirect()} className="btn-secondary btn mx-3" aria-label="signInBtn">
+            Sign up
+          </button>
+        </div>
+      </div>
     </header>
   );
 }
