@@ -21,7 +21,7 @@ export default function Header() {
         <p className="my-auto">{authenticated.email}</p>
         <button
           onClick={() => logoutRedirect()}
-          className="rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700"
+          className="btn"
           aria-label="signOutBtn"
         >
           Sign out

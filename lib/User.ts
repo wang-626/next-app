@@ -16,7 +16,6 @@ export async function registerUser({ user, token = false }: { user: any; token?:
     const set = fetchSet({ body });
     const res = await fetch(graphql, set);
     const json = await res.json();
-    console.log(json);
 
     if (json.data.registerUserByGithub !== null) {
       return json.data.registerUserByGithub.token;
@@ -32,7 +31,6 @@ export async function registerUser({ user, token = false }: { user: any; token?:
     const set = fetchSet({ body });
     const res = await fetch(graphql, set);
     const json = await res.json();
-    console.log(json);
 
     if (json.data.registerUserByEmail !== null) {
       return json.data.registerUserByEmail.token;
@@ -97,8 +95,6 @@ export async function fetchUserGithubOauth(id: string) {
 
   const res = await fetch(graphql, set);
   const json = await res.json();
-  console.log(json);
-  
 
   if (json.data.userById !== null) {
     return json.data.userById.github_oauth;
