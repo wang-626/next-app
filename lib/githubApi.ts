@@ -1,5 +1,6 @@
 import * as dotenv from "dotenv";
 import { fetchSet } from "lib/fetch";
+import type { issueInput, commentInput } from "type/github";
 
 const accessTokenUrl: string = "https://github.com/login/oauth/access_token";
 const graphqlUrl: string = "https://api.github.com/graphql";
@@ -50,6 +51,7 @@ export class githubFetch {
       const set = fetchSet({ body, header });
       const res = await fetch(graphqlUrl, set);
       const json = await res.json();
+
       let user = json.data.viewer;
 
       if (user.email === "") {
@@ -124,11 +126,11 @@ export class githubFetch {
       const res = await fetch(graphqlUrl, set);
       const json = await res.json();
 
-      let issues = json.data.viewer.repository.issues.nodes;
-      if (issues) {
-        return issues;
+      if (json.data.viewer.repository) {
+        return json.data.viewer.repository.issues.nodes;
+      } else {
+        return [];
       }
-      return;
     }
     return;
   }
@@ -143,6 +145,7 @@ export class githubFetch {
                 author{
                   login
                 }
+               id
                title
                number
                body
@@ -151,6 +154,7 @@ export class githubFetch {
                     author{
                       login
                     }
+                    id
                     databaseId
                     body
                   }
@@ -166,7 +170,72 @@ export class githubFetch {
       const res = await fetch(graphqlUrl, set);
       const json = await res.json();
 
-      let issue = json.data.viewer.repository.issue;
+      const issue = json.data.viewer.repository.issue;
+      if (issue) {
+        return issue;
+      }
+      return;
+    }
+    return;
+  }
+
+  async updateIssue(input: issueInput) {
+    if (this.token) {
+      let issueInput = `id:"${input.id}"`;
+      if (input.title) {
+        issueInput += `,title:"${input.title}"`;
+      }
+      if (input.body) {
+        issueInput += `,body:"${input.body}"`;
+      }
+      if (input.state) {
+        issueInput += `,state:"${input.state}"`;
+      }
+
+      const body = {
+        query: `mutation { 
+          updateIssue(input:{${issueInput}}){
+            actor{
+              login
+            }
+          }
+        }`,
+      };
+      const header = this.setHeader();
+      const set = fetchSet({ body, header });
+      const res = await fetch(graphqlUrl, set);
+      const json = await res.json();
+
+      const issue = json.data.updateIssue.actor.login;
+      if (issue) {
+        return issue;
+      }
+      return;
+    }
+    return;
+  }
+
+  async updateComment(input: commentInput) {
+    if (this.token) {
+      const commentInput = `id:"${input.id}",body:"${input.body}"`;
+
+      const body = {
+        query: `mutation { 
+          updateIssueComment(input:{${commentInput}}){
+            issueComment{
+              author{
+                login
+              }
+            }
+          }
+        }`,
+      };
+      const header = this.setHeader();
+      const set = fetchSet({ body, header });
+      const res = await fetch(graphqlUrl, set);
+      const json = await res.json();
+
+      const issue = json.data.updateIssueComment.issueComment.author.login;
       if (issue) {
         return issue;
       }
