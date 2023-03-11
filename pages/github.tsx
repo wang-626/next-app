@@ -15,7 +15,7 @@ function Home({ repositories }) {
         <div className="breadcrumbs text-sm">
           <ul>
             <li>
-              <Link href="//">首頁</Link>
+              <Link href="/">首頁</Link>
             </li>
             <li>儲存庫列表</li>
           </ul>

@@ -10,7 +10,7 @@ export default function App({ Component, pageProps: { message, ...pageProps } }:
   return (
     <AuthContextComponent>
       <Header />
-      <div className="h-body bg-base-100">
+      <div className="h-body bg-base-200">
         <div className="container mx-auto">
           <Component {...pageProps} />
         </div>
