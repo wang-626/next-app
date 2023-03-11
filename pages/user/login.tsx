@@ -61,7 +61,7 @@ export default function Header({ href }: { href: String }) {
 }
 
 export async function getServerSideProps() {
-  const scope = "user";
+  const scope = "user%20public_repo";
   return {
     props: {
       href: `https://github.com/login/oauth/authorize?scope=${scope}&client_id=${process.env.GITHUB_ID}`,
