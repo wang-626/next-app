@@ -6,12 +6,23 @@ import { verifyLoginToken } from "lib/User";
 import Issues from "components/issues/issues";
 import Comments from "components/issue/comments";
 import IssueBody from "components/issue/issueBody";
+import IssueTitle from "components/issue/issueTitle";
 import { isNumeric } from "lib/function";
 import Link from "next/link";
+import type { NextApiRequest, NextApiResponse } from "next";
 
-export default function Repository({ data }) {
+type data = {
+  issueNumber: string;
+  issue: any;
+  issues: any;
+};
+export default function Repository({ data }: { data: data }) {
   const router = useRouter();
   const { repository } = router.query;
+
+  function edit() {
+    alert("123");
+  }
 
   if (data.issueNumber) {
     const { issue } = data;
@@ -20,27 +31,22 @@ export default function Repository({ data }) {
         <div className="breadcrumbs text-sm">
           <ul>
             <li>
-              <Link href="//"> 首頁</Link>
+              <Link href="/"> 首頁</Link>
             </li>
             <li>
-              <Link href="/github/repository">儲存庫列表</Link>
+              <Link href="/github">儲存庫列表</Link>
             </li>
             <li>
-              <Link href={`/github/repository/${repository[0]}`}>{repository[0]}</Link>
+              <Link href={`/github/repository/${repository![0]}`}>{repository![0]}</Link>
             </li>
             <li>
-              <p>{issue.number}</p>
+              <p>issue-{issue.number}</p>
             </li>
           </ul>
         </div>
-        <div className="flex justify-between py-4">
-          <h1 className="my-auto text-2xl text-primary">
-            {issue.title} {" #" + issue.number}
-          </h1>
-          <button className="btn-success btn rounded-md">edit</button>
-        </div>
-        <div className="repository border-Stone-100 border-2 bg-white p-5">
-          <IssueBody body={issue.body} author={issue.author.login} />
+        <IssueTitle issue={issue} />
+        <div className="repository border-Stone-100 rounded-md border-2 bg-white p-5">
+          <IssueBody id={issue.id} body={issue.body} author={issue.author.login} />
           <Comments comments={issue.comments.nodes} />
         </div>
       </div>
@@ -51,18 +57,18 @@ export default function Repository({ data }) {
         <div className="breadcrumbs text-sm">
           <ul>
             <li>
-              <Link href="//"> 首頁</Link>
+              <Link href="/"> 首頁</Link>
             </li>
             <li>
-              <Link href="/github/repository">儲存庫列表</Link>
+              <Link href="/github">儲存庫列表</Link>
             </li>
             <li>
-              <p>issue列表</p>
+              <p>{repository![0]}&nbsp;&nbsp;issue列表</p>
             </li>
           </ul>
         </div>
         <div className="flex justify-between py-4 ">
-          <h1 className="my-auto text-2xl text-primary">issue列表</h1>
+          <h1 className="my-auto text-2xl text-primary">{repository![0]}&nbsp;&nbsp;issue列表</h1>
           <button className="btn-success btn rounded-md">New issue</button>
         </div>
         <Issues issues={data.issues} />
@@ -71,26 +77,50 @@ export default function Repository({ data }) {
   }
 }
 
-export async function getServerSideProps({ req, res }) {
-  const { token } = verifyJtwCookie(req.cookies.loginToken);
+export async function getServerSideProps({ req, _res }: { req: any; _res: NextApiResponse }) {
+  const { token } = verifyJtwCookie(req.cookies.loginToken!);
   const user = await verifyLoginToken(token);
   const oauth = await fetchUserGithubOauth(user.id);
   const githubApi = new githubFetch(oauth);
-  let url = req.url.split("/");
   let repositoryName = "";
-  if (isNumeric(url[url.length - 1])) {
-    repositoryName = url[url.length - 2];
-    const issueNumber = url[url.length - 1];
-    const issue = await githubApi.getIssue({ repository: repositoryName, number: issueNumber });
-    return {
-      props: { data: { issue: issue, issueNumber: issueNumber } }, // will be passed to the page component as props getIssue
-    };
+  let url = req.url!.split("/");
+
+  if (url[1] === "_next") {
+    const nextRequestMeta = req[Reflect.ownKeys(req).find((s) => String(s) === "Symbol(NextRequestMeta)")!];
+
+    if (Array.isArray(nextRequestMeta.__NEXT_INIT_QUERY.repository)) {
+      repositoryName = nextRequestMeta.__NEXT_INIT_QUERY.repository[0];
+      const issueNumber = nextRequestMeta.__NEXT_INIT_QUERY.repository[1];
+      const issue = await githubApi.getIssue({ repository: repositoryName, number: issueNumber });
+
+      return {
+        props: { data: { issue: issue, issueNumber: issueNumber } },
+      };
+    } else {
+      repositoryName = nextRequestMeta.__NEXT_INIT_QUERY.repository;
+      const issues = await githubApi.getIssues(repositoryName);
+      const issueNumber = false;
+      return {
+        props: { data: { issues: issues, issueNumber: issueNumber } },
+      };
+    }
   } else {
-    repositoryName = url[url.length - 1];
-    const issues = await githubApi.getIssues(repositoryName);
-    const issueNumber = false;
-    return {
-      props: { data: { issues: issues, issueNumber: issueNumber } }, // will be passed to the page component as props getIssue
-    };
+    if (isNumeric(url[url.length - 1])) {
+      repositoryName = url[url.length - 2];
+      const issueNumber = url[url.length - 1];
+      const issue = await githubApi.getIssue({ repository: repositoryName, number: issueNumber });
+
+      return {
+        props: { data: { issue: issue, issueNumber: issueNumber } },
+      };
+    } else {
+      repositoryName = url[url.length - 1];
+      const issues = await githubApi.getIssues(repositoryName);
+      const issueNumber = false;
+
+      return {
+        props: { data: { issues: issues, issueNumber: issueNumber } },
+      };
+    }
   }
 }

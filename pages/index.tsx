@@ -15,7 +15,7 @@ function Home() {
   if (authenticated) {
     return (
       <div className="py-4">
-        <div className="card w-96 bg-base-200 py-3 shadow-xl">
+        <div className="card w-96 bg-base-100 py-3 shadow-xl">
           <figure>
             <Image src={img} alt="Picture of the author" width={100} height={100} className="mx-auto" />
           </figure>
