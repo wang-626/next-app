@@ -9,15 +9,15 @@ export default function Header() {
   const status = "";
 
   function loginRedirect() {
-    router.push("//user/login");
+    router.push("/user/login");
   }
 
   function signUpRedirect() {
-    router.push("//user/register");
+    router.push("/user/register");
   }
 
   function logoutRedirect() {
-    router.push("//api/logout");
+    router.push("/api/logout");
   }
 
   if (authenticated) {
