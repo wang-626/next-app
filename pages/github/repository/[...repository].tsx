@@ -7,9 +7,11 @@ import Issues from "components/issues/issues";
 import Comments from "components/issue/comments";
 import IssueBody from "components/issue/issueBody";
 import IssueTitle from "components/issue/issueTitle";
-import { isNumeric } from "lib/function";
+import { isNumeric, removeUrlParameter } from "lib/function";
 import Link from "next/link";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { issueStates } from "type/github";
+import queryString from "node:querystring";
 
 type data = {
   issueNumber: string;
@@ -78,16 +80,30 @@ export default function Repository({ data }: { data: data }) {
 }
 
 export async function getServerSideProps({ req, _res }: { req: any; _res: NextApiResponse }) {
+  function convertUrlParameter(url: string) {
+    if (url.includes("?")) {
+      return {
+        url: url.slice(0, url.indexOf("?")),
+        params: queryString.parse(url.slice(url.indexOf("?") + 1, url.length)),
+      };
+    }
+    return {
+      url: url,
+      params: null,
+    };
+  }
+
   const { token } = verifyJtwCookie(req.cookies.loginToken!);
   const user = await verifyLoginToken(token);
   const oauth = await fetchUserGithubOauth(user.id);
   const githubApi = new githubFetch(oauth);
   let repositoryName = "";
-  let url = req.url!.split("/");
+  let { url, params } = convertUrlParameter(req.url!);
+  console.log(convertUrlParameter(req.url!));
+  url = removeUrlParameter(url).split("/");
 
   if (url[1] === "_next") {
     const nextRequestMeta = req[Reflect.ownKeys(req).find((s) => String(s) === "Symbol(NextRequestMeta)")!];
-
     if (Array.isArray(nextRequestMeta.__NEXT_INIT_QUERY.repository)) {
       repositoryName = nextRequestMeta.__NEXT_INIT_QUERY.repository[0];
       const issueNumber = nextRequestMeta.__NEXT_INIT_QUERY.repository[1];
@@ -98,7 +114,12 @@ export async function getServerSideProps({ req, _res }: { req: any; _res: NextAp
       };
     } else {
       repositoryName = nextRequestMeta.__NEXT_INIT_QUERY.repository;
-      const issues = await githubApi.getIssues(repositoryName);
+      let state: issueStates = issueStates.OPEN;
+      if (params.state) {
+        state = params.state;
+      }
+
+      const issues = await githubApi.getIssues(repositoryName, state);
       const issueNumber = false;
       return {
         props: { data: { issues: issues, issueNumber: issueNumber } },
@@ -115,7 +136,11 @@ export async function getServerSideProps({ req, _res }: { req: any; _res: NextAp
       };
     } else {
       repositoryName = url[url.length - 1];
-      const issues = await githubApi.getIssues(repositoryName);
+      let state: issueStates = issueStates.OPEN;
+      if (params && params.state) {
+        state = params.state;
+      }
+      const issues = await githubApi.getIssues(repositoryName, state);
       const issueNumber = false;
 
       return {
