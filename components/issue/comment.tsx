@@ -7,9 +7,17 @@ import { useState } from "react";
 import Markdown from "markdown-to-jsx";
 import { fetchSet } from "lib/fetch";
 
+type comment = {
+  id: string;
+  body: string;
+  author: {
+    login: string;
+  };
+};
+
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
-export default function Comment({ comment }: { comment: object }) {
+export default function Comment({ comment }: { comment: comment }) {
   const [value, setValue] = useState(comment.body);
   const [textDisplay, setTextDisplay] = useState("block");
   const [optionsDisplay, setOptionsDisplay] = useState("block");
@@ -26,7 +34,6 @@ export default function Comment({ comment }: { comment: object }) {
     const set = fetchSet({ body });
     const res = await fetch((process.env.SERVER_URL || "http://127.0.0.1:3000") + "/api/github", set);
     const data = await res.json();
-    console.log(data);
 
     setTextDisplay("block");
     setEditDisplay("hidden");
