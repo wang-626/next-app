@@ -18,7 +18,7 @@ export default function IssueTitle({ issue }: { issue: string }) {
 
     const res = await fetch((process.env.SERVER_URL || "http://127.0.0.1:3000") + "/api/github", set);
     const data = await res.json();
-    console.log(data);
+  
 
     setTextDisplay("block");
     setEditDisplay("hidden");
