@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import type { issueInput, commentInput } from "type/github";
+import type { issueInput, commentInput } from "types/github";
 import { fetchUserGithubOauth } from "lib/User";
 import { githubFetch } from "lib/githubApi";
 import { verifyJtwCookie } from "lib/jwt";
@@ -23,6 +23,21 @@ export default async function Auth(severReq: NextApiRequest, severRes: NextApiRe
       input["state"] = severReq.body.data.state;
     }
     githubApi.updateIssue(input);
+  }
+
+  if (severReq.body.type === "issueNew") {
+    const id = await githubApi.getRepositoryId(severReq.body.data.repository);
+
+    if (id) {
+      const input: issueInput = { id: id };
+      if (severReq.body.data.title) {
+        input["title"] = severReq.body.data.title;
+      }
+      if (severReq.body.data.body) {
+        input["body"] = severReq.body.data.body;
+      }
+      githubApi.createIssue(input);
+    }
   }
 
   if (severReq.body.type === "comment") {
