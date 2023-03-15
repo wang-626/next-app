@@ -28,26 +28,32 @@ export default function Header({ href }: { href: String }) {
     }
   }
   return (
-    <div className="flex h-screen flex-wrap content-center justify-center bg-slate-300">
-      <div className="h-80 w-96 bg-white">
+    <div className="h-body flex flex-wrap content-center justify-center ">
+      <div className="w-2/3 rounded-md bg-base-300 px-5 shadow-lg lg:w-1/3">
+        <h1 className="py-8 text-center text-4xl font-bold">Sign in</h1>
         <form onSubmit={handleSubmit}>
-          <div className="px-2">
-            <label htmlFor="email">email:</label>
-            <input type="email" id="email" className="w-full border-b-2 border-sky-500 " />
+          <div className="form-control w-full py-3">
+            <input type="email" placeholder="Email" id="email" className="input w-full py-3" />
           </div>
-          <div className="px-2">
-            <label htmlFor="password">password:</label>
-            <input type="password" id="password" className="w-full border-b-2 border-sky-500" />
+          <div className="form-control w-full py-3">
+            <input type="password" placeholder="Password" id="password" className="input w-full py-3" />
           </div>
-          <div className="flex justify-center px-2">
-            <input type="submit" value="Login" className="cursor-pointer" />
+          <div className="flex justify-center py-3">
+            <button type="submit" className="btn-primary  btn w-full">
+              Sign in
+            </button>
           </div>
         </form>
-        <div className="flex justify-center px-2">
-          <a href={href}>sing in with Github</a>
+        <div className="divider">OR</div>
+        <div className="flex justify-center py-3 ">
+          <a className="btn-outline btn-ghost btn w-full" href={href}>
+            sing in with Github
+          </a>
         </div>
-        <div className="flex justify-center px-2">
-          <Link href="/user/register">Sign Up</Link>
+        <div className="mb-3 flex justify-center py-3">
+          <Link className="btn-outline btn-ghost btn w-full" href="/user/register">
+            Sign Up
+          </Link>
         </div>
       </div>
     </div>
@@ -55,7 +61,7 @@ export default function Header({ href }: { href: String }) {
 }
 
 export async function getServerSideProps() {
-  const scope = "user";
+  const scope = "user%20public_repo";
   return {
     props: {
       href: `https://github.com/login/oauth/authorize?scope=${scope}&client_id=${process.env.GITHUB_ID}`,

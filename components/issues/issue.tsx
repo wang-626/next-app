@@ -1,23 +1,38 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/router";
+import { fetchSet } from "lib/fetch";
+import { useState } from "react";
+import { removeUrlParameter } from "lib/function";
 
 export default function Issue({ issue }: { issue: object }) {
   const router = useRouter();
+  const [display, setDisplay] = useState("block");
 
   function edit() {
-    router.push(`${router.asPath}/${issue.number}`);
+    router.push(`${removeUrlParameter(router.asPath)}/${issue.number}`);
+  }
+  async function close() {
+    let body = {
+      type: "issue",
+      data: {
+        id: issue.id,
+        state: "CLOSED",
+      },
+    };
+    const set = fetchSet({ body });
+    const res = await fetch((process.env.SERVER_URL || "http://127.0.0.1:3000") + "/api/github", set);
+    const data = await res.json();
   }
 
   return (
-    <div className="flex  justify-between  border-b-2 border-slate-100 py-2 text-lg text-slate-600">
+    <div className="flex  justify-between rounded-md border-b-2 border-slate-100 py-2 text-lg text-slate-600 hover:bg-base-300">
       <div className="flex flex-col px-5">
         <div className={`py-2 text-xl`}>
           {issue.title} {" #" + issue.number}
         </div>
-        <div className={`py-2 text-sm`}>{issue.body}</div>
       </div>
-      <div className="dropdown dropdown-left">
+      <div className="dropdown-left dropdown">
         <label tabIndex={0} className="m-1 cursor-pointer p-3 py-1">
           <FontAwesomeIcon icon={faEllipsisVertical} />
         </label>
@@ -26,10 +41,7 @@ export default function Issue({ issue }: { issue: object }) {
             <a onClick={edit}>編輯</a>
           </li>
           <li>
-            <a>關閉</a>
-          </li>
-          <li>
-            <a>刪除</a>
+            <a onClick={close}>關閉</a>
           </li>
         </ul>
       </div>

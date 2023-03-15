@@ -1,5 +1,14 @@
 import Comment from "components/issue/comment";
-export default function Comments({ comments }: { comments: string[] }) {
+
+type comment = {
+  id: string;
+  body: string;
+  author: {
+    login: string;
+  };
+};
+
+export default function Comments({ comments }: { comments: comment[] }) {
   if (comments) {
     return (
       <div className="comments">

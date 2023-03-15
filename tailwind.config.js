@@ -10,11 +10,6 @@ module.exports = {
   ],
   theme: {
     extend: {
-      colors: {
-        base: {
-          300: '#EBEEF1'
-        }
-      }
     },
   },
   plugins: [require('@tailwindcss/typography'), require("daisyui")],

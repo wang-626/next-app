@@ -1,5 +1,6 @@
 import * as dotenv from "dotenv";
 import { fetchSet } from "lib/fetch";
+import type { issueInput, commentInput, issueStates } from "types/github";
 
 const accessTokenUrl: string = "https://github.com/login/oauth/access_token";
 const graphqlUrl: string = "https://api.github.com/graphql";
@@ -50,6 +51,7 @@ export class githubFetch {
       const set = fetchSet({ body, header });
       const res = await fetch(graphqlUrl, set);
       const json = await res.json();
+
       let user = json.data.viewer;
 
       if (user.email === "") {
@@ -100,13 +102,40 @@ export class githubFetch {
     return;
   }
 
-  async getIssues(repository: string) {
-    if (this.token) {
+  async getRepositoryId(name: string) {
+    try {
+      const body = {
+        query: `query { 
+          viewer { 
+            repository(name:"${name}") {
+              id
+            }
+          }
+        }`,
+      };
+      const header = this.setHeader();
+
+      const set = fetchSet({ body, header });
+      const res = await fetch(graphqlUrl, set);
+      const json = await res.json();
+      return json.data.viewer.repository.id;
+    } catch {
+      return null;
+    }
+  }
+
+  async getIssues({ repository, state, after }: { repository: string; state: issueStates; after?: string }) {
+    try {
+      let input = `first:10,states:${state}`;
+      if (after) {
+        input += `,after:"${after}"`;
+      }
+
       const body = {
         query: `query { 
           viewer { 
             repository(name:"${repository}"){
-              issues(first:10) {
+              issues(${input}) {
                 nodes {
                   id
                   number
@@ -118,21 +147,17 @@ export class githubFetch {
           }
         }`,
       };
-      const header = this.setHeader();
 
+      const header = this.setHeader();
       const set = fetchSet({ body, header });
       const res = await fetch(graphqlUrl, set);
       const json = await res.json();
 
-      let issues = json.data.viewer.repository.issues.nodes;
-      if (issues) {
-        return issues;
-      }
-      return;
+      return json.data.viewer.repository.issues.nodes;
+    } catch {
+      return null;
     }
-    return;
   }
-
   async getIssue({ repository, number }: { repository: string; number: string }) {
     if (this.token) {
       const body = {
@@ -143,6 +168,7 @@ export class githubFetch {
                 author{
                   login
                 }
+               id
                title
                number
                body
@@ -151,6 +177,7 @@ export class githubFetch {
                     author{
                       login
                     }
+                    id
                     databaseId
                     body
                   }
@@ -160,18 +187,165 @@ export class githubFetch {
           }
         }`,
       };
-      const header = this.setHeader();
+      try {
+        const header = this.setHeader();
+        const set = fetchSet({ body, header });
+        const res = await fetch(graphqlUrl, set);
+        const json = await res.json();
+        return json.data.viewer.repository.issue;
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  }
 
+  async getIssueCount({ repository, state }: { repository: string; state: issueStates }) {
+    if (this.token) {
+      const body = {
+        query: `query { 
+          viewer {
+            repository(name: "${repository}") {
+              issues(states: ${state}) {
+                totalCount
+              }
+            }
+          }
+        }`,
+      };
+      try {
+        const header = this.setHeader();
+        const set = fetchSet({ body, header });
+        const res = await fetch(graphqlUrl, set);
+        const json = await res.json();
+
+        return json.data.viewer.repository.issues.totalCount;
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  }
+
+  async getIssuePageCursor({
+    repository,
+    page,
+    count,
+    state,
+  }: {
+    repository: string;
+    page: number;
+    count: number;
+    state: issueStates;
+  }) {
+    try {
+      const body = {
+        query: `query{
+          viewer{
+            repository(name:"${repository}") {
+              issues(first: ${count * (page - 1)},states:${state}) {
+                pageInfo {
+                  endCursor
+                }
+              }
+            }
+          }
+        }`,
+      };
+      const header = this.setHeader();
       const set = fetchSet({ body, header });
       const res = await fetch(graphqlUrl, set);
       const json = await res.json();
 
-      let issue = json.data.viewer.repository.issue;
+      return json.data.viewer.repository.issues.pageInfo.endCursor;
+    } catch {
+      return null;
+    }
+  }
+
+  async updateIssue(input: issueInput) {
+    if (this.token) {
+      let issueInput = `id:"${input.id}"`;
+      if (input.title) {
+        issueInput += `,title:"${input.title}"`;
+      }
+      if (input.body) {
+        issueInput += `,body:"${input.body}"`;
+      }
+      if (input.state) {
+        issueInput += `,state:${input.state}`;
+      }
+
+      const body = {
+        query: `mutation { 
+          updateIssue(input:{${issueInput}}){
+            actor{
+              login
+            }
+          }
+        }`,
+      };
+      const header = this.setHeader();
+      const set = fetchSet({ body, header });
+      const res = await fetch(graphqlUrl, set);
+      const json = await res.json();
+      const issue = json.data.updateIssue.actor.login;
       if (issue) {
         return issue;
       }
       return;
     }
     return;
+  }
+
+  async updateComment(input: commentInput) {
+    if (this.token) {
+      const commentInput = `id:"${input.id}",body:"${input.body}"`;
+
+      const body = {
+        query: `mutation { 
+          updateIssueComment(input:{${commentInput}}){
+            issueComment{
+              author{
+                login
+              }
+            }
+          }
+        }`,
+      };
+      const header = this.setHeader();
+      const set = fetchSet({ body, header });
+      const res = await fetch(graphqlUrl, set);
+      const json = await res.json();
+
+      const issue = json.data.updateIssueComment.issueComment.author.login;
+      if (issue) {
+        return issue;
+      }
+      return;
+    }
+    return;
+  }
+
+  async createIssue(input: issueInput) {
+    try {
+      let issueInput = `repositoryId:"${input.id}",title:"${input.title}",body:"${input.body}"`;
+      const body = {
+        query: `mutation { 
+          createIssue(input:{${issueInput}}){
+            issue{
+              id
+            }
+          }
+        }`,
+      };
+      const header = this.setHeader();
+      const set = fetchSet({ body, header });
+      const res = await fetch(graphqlUrl, set);
+      const json = await res.json();
+      return json.data.createIssue.issue.id;
+    } catch {
+      return null;
+    }
   }
 }
