@@ -7,29 +7,30 @@ import Issues from "components/issues/issues";
 import Comments from "components/issue/comments";
 import IssueBody from "components/issue/issueBody";
 import IssueTitle from "components/issue/issueTitle";
+import New from "components/issues/new";
+import Pagination from "components/issues/pagination";
 import { isNumeric, removeUrlParameter } from "lib/function";
 import Link from "next/link";
-import type { NextApiRequest, NextApiResponse } from "next";
-import { issueStates } from "type/github";
+import { issueStates } from "types/github";
 import queryString from "node:querystring";
 
 type data = {
-  issueNumber: string;
-  issue: any;
-  issues: any;
+  issue?: any;
+  issues?: any;
+  issueCount?: number;
 };
+
 export default function Repository({ data }: { data: data }) {
   const router = useRouter();
   const { repository } = router.query;
-
-  function edit() {
-    alert("123");
+  function newIssue() {
+    router.push(`${removeUrlParameter(router.asPath)}/new`);
   }
 
-  if (data.issueNumber) {
+  if (isNumeric(removeUrlParameter(router.asPath).slice(-1))) {
     const { issue } = data;
     return (
-      <div className="">
+      <div className="mb-4">
         <div className="breadcrumbs text-sm">
           <ul>
             <li>
@@ -53,9 +54,11 @@ export default function Repository({ data }: { data: data }) {
         </div>
       </div>
     );
+  } else if (removeUrlParameter(router.asPath).slice(-3) === "new") {
+    return <New />;
   } else {
     return (
-      <div className="">
+      <div className="pb-10">
         <div className="breadcrumbs text-sm">
           <ul>
             <li>
@@ -71,15 +74,18 @@ export default function Repository({ data }: { data: data }) {
         </div>
         <div className="flex justify-between py-4 ">
           <h1 className="my-auto text-2xl text-primary">{repository![0]}&nbsp;&nbsp;issue列表</h1>
-          <button className="btn-success btn rounded-md">New issue</button>
+          <button onClick={newIssue} className="btn btn-success rounded-md">
+            New issue
+          </button>
         </div>
         <Issues issues={data.issues} />
+        <Pagination issueCount={data.issueCount} router={router} />
       </div>
     );
   }
 }
 
-export async function getServerSideProps({ req, _res }: { req: any; _res: NextApiResponse }) {
+export async function getServerSideProps({ req }: { req: any }) {
   function convertUrlParameter(url: string) {
     if (url.includes("?")) {
       return {
@@ -97,54 +103,108 @@ export async function getServerSideProps({ req, _res }: { req: any; _res: NextAp
   const user = await verifyLoginToken(token);
   const oauth = await fetchUserGithubOauth(user.id);
   const githubApi = new githubFetch(oauth);
-  let repositoryName = "";
+  let repository: string = "";
   let { url, params } = convertUrlParameter(req.url!);
-  console.log(convertUrlParameter(req.url!));
-  url = removeUrlParameter(url).split("/");
+  let urlArr = removeUrlParameter(url).split("/");
 
-  if (url[1] === "_next") {
-    const nextRequestMeta = req[Reflect.ownKeys(req).find((s) => String(s) === "Symbol(NextRequestMeta)")!];
-    if (Array.isArray(nextRequestMeta.__NEXT_INIT_QUERY.repository)) {
-      repositoryName = nextRequestMeta.__NEXT_INIT_QUERY.repository[0];
-      const issueNumber = nextRequestMeta.__NEXT_INIT_QUERY.repository[1];
-      const issue = await githubApi.getIssue({ repository: repositoryName, number: issueNumber });
+  if (urlArr[1] === "_next") {
+    // Array.isArray 從new redirect回來會有 params.repository
+    if (params && params.repository && Array.isArray(params.repository)) {
+      // params.repository[1]是數字 則查詢issue 不是數字代表是new 新issue
+      if (isNumeric(params.repository[1])) {
+        repository = params.repository[0];
+        const issueNumber = params.repository[1];
+        const issue = await githubApi.getIssue({ repository: repository, number: issueNumber });
 
-      return {
-        props: { data: { issue: issue, issueNumber: issueNumber } },
-      };
+        if (issue === null) {
+          return {
+            notFound: true,
+          };
+        }
+
+        return {
+          props: { data: { issue: issue } },
+        };
+      } else {
+        return {
+          props: { data: { issue: null } },
+        };
+      }
     } else {
-      repositoryName = nextRequestMeta.__NEXT_INIT_QUERY.repository;
+      repository = params!.repository! as string;
       let state: issueStates = issueStates.OPEN;
-      if (params.state) {
-        state = params.state;
+      if (params!.state) {
+        state = issueStates[params!.state as keyof typeof issueStates];
+      }
+      let cursor = null;
+      if (params && params.page) {
+        cursor = await githubApi.getIssuePageCursor({
+          repository: repository,
+          state: state,
+          page: Number(params.page),
+          count: 10,
+        });
       }
 
-      const issues = await githubApi.getIssues(repositoryName, state);
-      const issueNumber = false;
+      const issues = await githubApi.getIssues({ repository: repository, state: state, after: cursor });
+      const issueCount = await githubApi.getIssueCount({ repository: repository, state: state });
+
+      if (issues === null) {
+        return {
+          notFound: true,
+        };
+      }
+
       return {
-        props: { data: { issues: issues, issueNumber: issueNumber } },
+        props: { data: { issues: issues, issueCount: issueCount } },
       };
     }
   } else {
-    if (isNumeric(url[url.length - 1])) {
-      repositoryName = url[url.length - 2];
-      const issueNumber = url[url.length - 1];
-      const issue = await githubApi.getIssue({ repository: repositoryName, number: issueNumber });
+    if (isNumeric(urlArr[urlArr.length - 1])) {
+      repository = urlArr[urlArr.length - 2];
+      const issueNumber = urlArr[urlArr.length - 1];
+      const issue = await githubApi.getIssue({ repository: repository, number: issueNumber });
+
+      if (issue === null) {
+        return {
+          notFound: true,
+        };
+      }
 
       return {
-        props: { data: { issue: issue, issueNumber: issueNumber } },
+        props: { data: { issue: issue } },
+      };
+    } else if (urlArr[urlArr.length - 1] === "new") {
+      return {
+        props: { data: null },
       };
     } else {
-      repositoryName = url[url.length - 1];
+      repository = urlArr[urlArr.length - 1];
       let state: issueStates = issueStates.OPEN;
       if (params && params.state) {
-        state = params.state;
+        state = issueStates[params!.state as keyof typeof issueStates];
       }
-      const issues = await githubApi.getIssues(repositoryName, state);
-      const issueNumber = false;
+      let cursor = null;
+      if (params && params.page) {
+        cursor = await githubApi.getIssuePageCursor({
+          repository: repository,
+          state: state,
+          page: Number(params.page),
+          count: 10,
+        });
+      }
+
+      const issues = await githubApi.getIssues({ repository: repository, state: state, after: cursor });
+      const issueCount = await githubApi.getIssueCount({ repository: repository, state: state });
+
+      if (issues === null) {
+        return {
+          notFound: true,
+        };
+      }
 
       return {
-        props: { data: { issues: issues, issueNumber: issueNumber } },
+        props: { data: { issues: issues, issueCount: issueCount } },
       };
     }
   }
