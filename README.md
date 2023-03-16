@@ -24,7 +24,7 @@
 
 [x]串接Github graphql 關閉repository issue. 
 
-[]部屬. 
+[]GCP部屬
 
 
 
