@@ -1,4 +1,5 @@
 import { useState, useEffect, createContext, ReactNode } from "react";
+import * as dotenv from "dotenv";
 
 interface Props {
   children?: ReactNode;
