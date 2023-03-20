@@ -1,7 +1,7 @@
 import { fetchSet } from "lib/fetch";
 import { useState } from "react";
 
-export default function IssueTitle({ issue }: { issue: string }) {
+export default function IssueTitle({ issue }: { issue: any }) {
   const [value, setValue] = useState(issue.title);
   const [textDisplay, setTextDisplay] = useState("block");
   const [editDisplay, setEditDisplay] = useState("hidden");
@@ -33,7 +33,7 @@ export default function IssueTitle({ issue }: { issue: string }) {
     setEditDisplay("hidden");
   }
 
-  function change(event) {
+  function change(event:any) {
     setValue(event.target.value);
   }
 

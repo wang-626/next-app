@@ -2,7 +2,7 @@ import Link from "next/link";
 import { fetchSet } from "lib/fetch";
 import * as dotenv from "dotenv";
 
-export default function Header({ href }: { href: String }) {
+export default function Header({ href }: { href: string }) {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const target = event.target as typeof event.target & {

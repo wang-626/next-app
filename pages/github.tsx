@@ -7,7 +7,7 @@ import { verifyJtwCookie } from "lib/jwt";
 import { verifyLoginToken } from "lib/User";
 import Link from "next/link";
 
-function Home({ repositories }) {
+function Home({ repositories }: { repositories: any }) {
   const { authenticated, setAuthenticated } = useContext(AuthContext);
   if (authenticated) {
     return (
@@ -31,7 +31,7 @@ function Home({ repositories }) {
   }
 }
 
-export async function getServerSideProps({ req, res }) {
+export async function getServerSideProps({ req }: { req: any }) {
   if (req.cookies.loginToken) {
     const { token } = verifyJtwCookie(req.cookies.loginToken);
     const user = await verifyLoginToken(token);

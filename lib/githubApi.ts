@@ -64,7 +64,7 @@ export class githubFetch {
 
         if (emails) {
           // Sort by primary email - the user may have several emails, but only one of them will be primary
-          const sortedEmails = emails.sort((a: object, b: object) => b.primary - a.primary);
+          const sortedEmails = emails.sort((a: any, b: any) => b.primary - a.primary);
           user.email = sortedEmails[0].email;
         }
       }

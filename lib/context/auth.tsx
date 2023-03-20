@@ -6,7 +6,7 @@ interface Props {
 
 export const AuthContext = createContext({
   authenticated: {},
-  setAuthenticated: () => {},
+  setAuthenticated: (any:any) => {},
 });
 
 export function AuthContextComponent({ children }: Props) {
