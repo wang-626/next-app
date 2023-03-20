@@ -1,4 +1,5 @@
 import { useState, useEffect, createContext, ReactNode } from "react";
+import * as dotenv from "dotenv";
 
 interface Props {
   children?: ReactNode;
@@ -6,14 +7,14 @@ interface Props {
 
 export const AuthContext = createContext({
   authenticated: {},
-  setAuthenticated: (any:any) => {},
+  setAuthenticated: (any: any) => {},
 });
 
 export function AuthContextComponent({ children }: Props) {
   const [authenticated, setAuthenticated] = useState(false);
 
   const getApiData = async () => {
-    const res = await fetch("http://127.0.0.1:3000/api/verifyLoginToken");
+    const res = await fetch(process.env.SERVER_URL || "http://127.0.0.1:3000" + "/api/verifyLoginToken");
     const json = await res.json();
 
     if (json.user) {
