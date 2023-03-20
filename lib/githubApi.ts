@@ -75,11 +75,18 @@ export class githubFetch {
     }
   }
 
-  async getRepositories() {
+  async getRepositories({ after, count }: { after?: string; count: number }) {
+    let input = "affiliations:[OWNER]";
+    if (after) {
+      input += `,after:"${after}"`;
+    }
+    if (count) {
+      input += `,first:${count}`;
+    }
     const body = {
       query: `query { 
         viewer { 
-          repositories(affiliations:[OWNER],first:10) {
+          repositories(${input}) {
             nodes{
               name
             }
@@ -92,8 +99,7 @@ export class githubFetch {
     try {
       const res = await fetch(graphqlUrl, set);
       const json = await res.json();
-      let repositories = json.data.viewer.repositories.nodes;
-      return repositories;
+      return json.data.viewer.repositories.nodes;
     } catch {
       return null;
     }
@@ -205,16 +211,38 @@ export class githubFetch {
     try {
       const res = await fetch(graphqlUrl, set);
       const json = await res.json();
-      return json.data.viewer.repository.issues.totalCount;
+      return json.data.viewer.repositories.totalCount;
+    } catch {
+      return null;
+    }
+  }
+
+  async getRepositoriesPageCursor({ page, count }: { page: number; count: number }) {
+    const body = {
+      query: `query { 
+          viewer { 
+            repositories(first: ${count * (page - 1)},affiliations:[OWNER]){
+              pageInfo {
+                endCursor
+              }
+            }
+          }
+        }`,
+    };
+    const set = fetchSet({ body, header: this.setHeader() });
+
+    try {
+      const res = await fetch(graphqlUrl, set);
+      const json = await res.json();
+      return json.data.viewer.repositories.pageInfo.endCursor;
     } catch {
       return null;
     }
   }
 
   async getIssueCount({ repository, state }: { repository: string; state: issueStates }) {
-    if (this.token) {
-      const body = {
-        query: `query { 
+    const body = {
+      query: `query { 
           viewer {
             repository(name: "${repository}") {
               issues(states: ${state}) {
@@ -223,18 +251,16 @@ export class githubFetch {
             }
           }
         }`,
-      };
-      const set = fetchSet({ body, header: this.setHeader() });
+    };
+    const set = fetchSet({ body, header: this.setHeader() });
 
-      try {
-        const res = await fetch(graphqlUrl, set);
-        const json = await res.json();
-        return json.data.viewer.repository.issues.totalCount;
-      } catch {
-        return null;
-      }
+    try {
+      const res = await fetch(graphqlUrl, set);
+      const json = await res.json();
+      return json.data.viewer.repository.issues.totalCount;
+    } catch {
+      return null;
     }
-    return null;
   }
 
   async getIssuePageCursor({
