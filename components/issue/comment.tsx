@@ -70,7 +70,7 @@ export default function Comment({ comment }: { comment: comment }) {
           <Markdown>{value}</Markdown>
         </div>
         <div className={`${editDisplay}`}>
-          <MDEditor value={value} onChange={setValue} />
+          <MDEditor value={value} onChange={(string) => setValue(string!)} />
           <div className="flex justify-end py-2">
             <button onClick={cancel} className="btn-error btn mr-2 rounded-md">
               取消

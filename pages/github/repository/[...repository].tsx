@@ -79,7 +79,7 @@ export default function Repository({ data }: { data: data }) {
           </button>
         </div>
         <Issues issues={data.issues} />
-        <Pagination issueCount={data.issueCount} router={router} />
+        <Pagination issueCount={data.issueCount!} router={router} />
       </div>
     );
   }

@@ -7,25 +7,25 @@ export default function Pagination({ issueCount, router }: { issueCount: number;
   const urlArr = router.asPath.split("/");
   let repository = urlArr[urlArr.length - 2];
   let allPage = Math.ceil(issueCount / 10);
-  function change(i) {
+  function change(i: any) {
     router.push(replaceUrlParam({ url: router.asPath, paramName: "page", paramValue: String(i) }));
   }
 
-  function previousColor(page) {
+  function previousColor(page: any) {
     if (page === 1) {
       return "btn-disabled";
     }
     return "text-primary";
   }
 
-  function nextColor(page) {
+  function nextColor(page: any) {
     if (page === allPage) {
       return "btn-disabled";
     }
     return "text-primary";
   }
 
-  let currPage;
+  let currPage: any;
 
   if (router.query.page) {
     currPage = Number(router.query.page);
@@ -55,11 +55,21 @@ export default function Pagination({ issueCount, router }: { issueCount: number;
     return (
       <div className="mt-10 flex justify-center">
         <div className="btn-group">
-          <button onClick={() => change(currPage + 1)} className={`btn rounded-sm border-base-200 bg-base-200 ${previousColor(currPage)}`}>«</button>
+          <button
+            onClick={() => change(currPage + 1)}
+            className={`btn rounded-sm border-base-200 bg-base-200 ${previousColor(currPage)}`}
+          >
+            «
+          </button>
           {previousArr}
           <button className="btn btn-active rounded-sm">{currPage}</button>
           {nextArr}
-          <button onClick={() => change(currPage + 1)} className={`btn rounded-sm border-base-200 bg-base-200 ${nextColor(currPage)}`}>»</button>
+          <button
+            onClick={() => change(currPage + 1)}
+            className={`btn rounded-sm border-base-200 bg-base-200 ${nextColor(currPage)}`}
+          >
+            »
+          </button>
         </div>
       </div>
     );
@@ -82,7 +92,12 @@ export default function Pagination({ issueCount, router }: { issueCount: number;
       return (
         <div className="mt-10 flex justify-center">
           <div className="btn-group">
-            <button onClick={() => change(currPage - 1)} className={`btn rounded-sm border-base-200 bg-base-200 ${previousColor(currPage)}`}>«</button>
+            <button
+              onClick={() => change(currPage - 1)}
+              className={`btn rounded-sm border-base-200 bg-base-200 ${previousColor(currPage)}`}
+            >
+              «
+            </button>
             {previousArr}
             <button className="btn btn-active rounded-sm">{currPage}</button>
             {nextArr}

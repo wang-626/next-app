@@ -1,6 +1,7 @@
 import { fetchSet } from "lib/fetch";
+import * as dotenv from "dotenv";
 
-const graphql: string = "http://127.0.0.1:4000/graphql";
+const graphql: string = process.env.BACK_SERVER_URL + "/graphql" || "http://127.0.0.1:4000/graphql";
 
 export async function registerUser({ user, token = false }: { user: any; token?: string | false }) {
   let body = {};
@@ -16,6 +17,7 @@ export async function registerUser({ user, token = false }: { user: any; token?:
     const set = fetchSet({ body });
     const res = await fetch(graphql, set);
     const json = await res.json();
+    
 
     if (json.data.registerUserByGithub !== null) {
       return json.data.registerUserByGithub.token;

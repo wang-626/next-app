@@ -5,7 +5,7 @@ import { fetchSet } from "lib/fetch";
 
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
-export default function New(any) {
+export default function New() {
   const router = useRouter();
   const [titleValue, setTitleValue] = useState("");
   const [bodyValue, setBodyValue] = useState("");
@@ -28,7 +28,7 @@ export default function New(any) {
     // router.push(router.asPath.slice(0, -4));
   }
 
-  function titleChange(event) {
+  function titleChange(event: any) {
     setTitleValue(event.target.value);
   }
 
@@ -44,7 +44,11 @@ export default function New(any) {
             placeholder="標題"
             className="input-bordered input my-5 w-full"
           />
-          <MDEditor value={bodyValue} onChange={setBodyValue} textareaProps={{ placeholder: "請寫下問題的描述..." }} />
+          <MDEditor
+            value={bodyValue}
+            onChange={(string) => setBodyValue(string!)}
+            textareaProps={{ placeholder: "請寫下問題的描述..." }}
+          />
           <div className="flex justify-end py-2">
             <button type="submit" className="btn-success btn rounded-md">
               送出
