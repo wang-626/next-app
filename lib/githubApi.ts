@@ -200,6 +200,28 @@ export class githubFetch {
     return null;
   }
 
+  async getRepositoriesCount() {
+    const body = {
+      query: `query { 
+          viewer { 
+            repositories(affiliations:[OWNER]){
+              totalCount
+            }
+          }
+        }`,
+    };
+    try {
+      const header = this.setHeader();
+      const set = fetchSet({ body, header });
+      const res = await fetch(graphqlUrl, set);
+      const json = await res.json();
+
+      return json.data.viewer.repository.issues.totalCount;
+    } catch {
+      return null;
+    }
+  }
+
   async getIssueCount({ repository, state }: { repository: string; state: issueStates }) {
     if (this.token) {
       const body = {
