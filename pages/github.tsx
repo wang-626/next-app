@@ -13,29 +13,23 @@ import queryString from "node:querystring";
 function Home({ repositories, repositoriesCount }: { repositories: any; repositoriesCount: any }) {
   const { authenticated, setAuthenticated } = useContext(AuthContext);
   const router = useRouter();
-
-  if (authenticated) {
-    return (
-      <div>
-        <div className="breadcrumbs text-sm">
-          <ul>
-            <li>
-              <Link href="/">首頁</Link>
-            </li>
-            <li>儲存庫列表</li>
-          </ul>
-        </div>
-        <div className="py-4">
-          <h1 className="text-2xl text-primary">儲存庫列表</h1>
-          {repositoriesCount}
-        </div>
-        <Repositories repositories={repositories} />
-        <Pagination issueCount={repositoriesCount} router={router} />
+  return (
+    <div className="pb-10">
+      <div className="breadcrumbs text-sm">
+        <ul>
+          <li>
+            <Link href="/">首頁</Link>
+          </li>
+          <li>儲存庫列表</li>
+        </ul>
       </div>
-    );
-  } else {
-    return <p>請先登入</p>;
-  }
+      <div className="py-4">
+        <h1 className="text-2xl text-primary">儲存庫列表</h1>
+      </div>
+      <Repositories repositories={repositories} />
+      <Pagination count={repositoriesCount} router={router} />
+    </div>
+  );
 }
 
 export async function getServerSideProps({ req }: { req: any }) {
