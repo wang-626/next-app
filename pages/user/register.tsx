@@ -6,10 +6,10 @@ import img from "public/kitty.png";
 import Image from "next/image";
 
 export default function Register() {
-  const { authenticated, setAuthenticated } = useContext(AuthContext);
+  const { authenticated } = useContext(AuthContext);
   const router = useRouter();
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>): Promise<any> {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const target = event.target as typeof event.target & {
@@ -46,7 +46,7 @@ export default function Register() {
 
   return (
     <div className="h-body flex flex-wrap content-center justify-center ">
-      <div className="w-2/3 rounded-md bg-base-300 px-5 shadow-lg lg:w-1/3 py-10">
+      <div className="w-2/3 rounded-md bg-base-300 px-5 py-10 shadow-lg lg:w-1/3">
         <Image src={img} alt="Picture of the author" width={100} height={100} className="mx-auto" />
         <form onSubmit={handleSubmit}>
           <div className="form-control w-full py-3">
