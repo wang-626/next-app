@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 
-export default function Repository({ repository }: { repository: string[] }) {
+export default function Repository({ repository }: { repository: string }) {
   const router = useRouter();
   function redirect() {
     router.push(`github/repository/${repository}`);

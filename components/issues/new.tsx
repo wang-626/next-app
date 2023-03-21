@@ -25,11 +25,11 @@ export default function New() {
     const set = fetchSet({ body });
     const res = await fetch((process.env.SERVER_URL || "http://127.0.0.1:3000") + "/api/github", set);
     const data = await res.json();
-    // router.push(router.asPath.slice(0, -4));
   }
 
-  function titleChange(event: any) {
-    setTitleValue(event.target.value);
+  function titleChange(event: React.ChangeEvent) {
+    const target = event.target as HTMLInputElement;
+    setTitleValue(target.value);
   }
 
   return (
@@ -50,7 +50,7 @@ export default function New() {
             textareaProps={{ placeholder: "請寫下問題的描述..." }}
           />
           <div className="flex justify-end py-2">
-            <button type="submit" className="btn-success btn rounded-md">
+            <button type="submit" className="btn btn-success rounded-md">
               送出
             </button>
           </div>

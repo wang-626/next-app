@@ -3,46 +3,54 @@ import * as dotenv from "dotenv";
 
 const graphql: string = process.env.BACK_SERVER_URL + "/graphql" || "http://127.0.0.1:4000/graphql";
 
-export async function registerUser({ user, token = false }: { user: any; token?: string | false }) {
+type user = {
+  name: string;
+  email: string;
+  password: string;
+};
+
+type Login = {
+  email: string;
+  password: string;
+};
+
+export async function registerUser({ user, token = false }: { user: user; token?: string | false }) {
   let body = {};
-  if (token) {
-    body = {
-      query: `
-              mutation{
-                registerUserByGithub(email:"${user.email}",name:"${user.name}",github_oauth:"${token}"){
-                  token
-                }
-              }`,
-    };
-    const set = fetchSet({ body });
-    const res = await fetch(graphql, set);
-    const json = await res.json();
-    
+  try {
+    if (token) {
+      body = {
+        query: `
+                mutation{
+                  registerUserByGithub(email:"${user.email}",name:"${user.name}",github_oauth:"${token}"){
+                    token
+                  }
+                }`,
+      };
+      const set = fetchSet({ body });
 
-    if (json.data.registerUserByGithub !== null) {
+      const res = await fetch(graphql, set);
+      const json = await res.json();
       return json.data.registerUserByGithub.token;
-    }
-  } else {
-    body = {
-      query: `mutation{
-        registerUserByEmail(name:"${user.name}",email:"${user.email}",password:"${user.password}"){
-          token
-      }
-    }`,
-    };
-    const set = fetchSet({ body });
-    const res = await fetch(graphql, set);
-    const json = await res.json();
+    } else {
+      body = {
+        query: `mutation{
+          registerUserByEmail(name:"${user.name}",email:"${user.email}",password:"${user.password}"){
+            token
+        }
+      }`,
+      };
+      const set = fetchSet({ body });
 
-    if (json.data.registerUserByEmail !== null) {
+      const res = await fetch(graphql, set);
+      const json = await res.json();
       return json.data.registerUserByEmail.token;
     }
+  } catch {
+    return null;
   }
-
-  return;
 }
 
-export async function userLogin({ user }: { user: any }) {
+export async function userLogin({ user }: { user: Login }) {
   const body = {
     query: `
       mutation{
@@ -53,13 +61,13 @@ export async function userLogin({ user }: { user: any }) {
   };
   const set = fetchSet({ body });
 
-  const res = await fetch(graphql, set);
-  const json = await res.json();
-
-  if (json.data.userLogin !== null) {
+  try {
+    const res = await fetch(graphql, set);
+    const json = await res.json();
     return json.data.userLogin.token;
+  } catch {
+    return null;
   }
-  return;
 }
 
 export async function verifyLoginToken(token: string) {
@@ -75,13 +83,13 @@ export async function verifyLoginToken(token: string) {
   };
   const set = fetchSet({ body });
 
-  const res = await fetch(graphql, set);
-  const json = await res.json();
-
-  if (json.data.verifyLoginToken !== null) {
+  try {
+    const res = await fetch(graphql, set);
+    const json = await res.json();
     return json.data.verifyLoginToken;
+  } catch {
+    return null;
   }
-  return;
 }
 
 export async function fetchUserGithubOauth(id: string) {
@@ -95,11 +103,11 @@ export async function fetchUserGithubOauth(id: string) {
   };
   const set = fetchSet({ body });
 
-  const res = await fetch(graphql, set);
-  const json = await res.json();
-
-  if (json.data.userById !== null) {
+  try {
+    const res = await fetch(graphql, set);
+    const json = await res.json();
     return json.data.userById.github_oauth;
+  } catch {
+    return null;
   }
-  return;
 }

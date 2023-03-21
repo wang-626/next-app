@@ -1,7 +1,13 @@
 import { fetchSet } from "lib/fetch";
 import { useState } from "react";
 
-export default function IssueTitle({ issue }: { issue: any }) {
+type issue = {
+  id: string;
+  title: string;
+  number: string;
+};
+
+export default function IssueTitle({ issue }: { issue: issue }) {
   const [value, setValue] = useState(issue.title);
   const [textDisplay, setTextDisplay] = useState("block");
   const [editDisplay, setEditDisplay] = useState("hidden");
@@ -18,7 +24,6 @@ export default function IssueTitle({ issue }: { issue: any }) {
 
     const res = await fetch((process.env.SERVER_URL || "http://127.0.0.1:3000") + "/api/github", set);
     const data = await res.json();
-  
 
     setTextDisplay("block");
     setEditDisplay("hidden");
@@ -33,8 +38,9 @@ export default function IssueTitle({ issue }: { issue: any }) {
     setEditDisplay("hidden");
   }
 
-  function change(event:any) {
-    setValue(event.target.value);
+  function change(event: React.ChangeEvent) {
+    const target = event.target as HTMLInputElement;
+    setValue(target.value);
   }
 
   return (
@@ -48,14 +54,14 @@ export default function IssueTitle({ issue }: { issue: any }) {
         onChange={change}
         className={`my-auto rounded-md px-2 text-2xl text-primary ${editDisplay}`}
       />
-      <button onClick={edit} className={`btn-success btn rounded-md ${textDisplay}`}>
+      <button onClick={edit} className={`btn btn-success rounded-md ${textDisplay}`}>
         edit
       </button>
       <div className={`${editDisplay}`}>
-        <button onClick={save} className="btn-success btn rounded-md">
+        <button onClick={save} className="btn btn-success rounded-md">
           save
         </button>
-        <button onClick={cancel} className="btn-error btn rounded-md">
+        <button onClick={cancel} className="btn btn-error rounded-md">
           Cancel
         </button>
       </div>

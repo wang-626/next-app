@@ -5,7 +5,13 @@ import { fetchSet } from "lib/fetch";
 import { useState } from "react";
 import { removeUrlParameter } from "lib/function";
 
-export default function Issue({ issue }: { issue: any }) {
+type issue = {
+  id: string;
+  title: string;
+  number: string;
+};
+
+export default function Issue({ issue }: { issue: issue }) {
   const router = useRouter();
   const [display, setDisplay] = useState("block");
 

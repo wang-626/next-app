@@ -1,10 +1,15 @@
 import Repository from "components/repositories/repository";
-export default function Repositories({ repositories }: { repositories: any }) {
+
+type repository = {
+  name: string;
+};
+
+export default function Repositories({ repositories }: { repositories: repository[] }) {
   if (repositories) {
     return (
       <div className="repository border-Stone-100 rounded-md border-2 bg-white p-5">
-        {repositories.map((obj: any, i: any) => {
-          return <Repository key={i} repository={obj.name} />;
+        {repositories.map((repositoryObj: repository, i: number) => {
+          return <Repository key={i} repository={repositoryObj.name} />;
         })}
       </div>
     );

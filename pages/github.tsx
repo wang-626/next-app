@@ -1,6 +1,4 @@
-import { useContext } from "react";
 import { useRouter } from "next/router";
-import { AuthContext } from "lib/context/auth";
 import Repositories from "components/repositories/repositories";
 import { fetchUserGithubOauth } from "lib/User";
 import { githubFetch } from "lib/githubApi";
@@ -9,9 +7,9 @@ import { verifyLoginToken } from "lib/User";
 import Link from "next/link";
 import Pagination from "components/pagination";
 import queryString from "node:querystring";
+import { GetServerSideProps } from "next";
 
-function Home({ repositories, repositoriesCount }: { repositories: any; repositoriesCount: any }) {
-  const { authenticated, setAuthenticated } = useContext(AuthContext);
+function Home({ repositories, repositoriesCount }: { repositories: any; repositoriesCount: number }) {
   const router = useRouter();
   return (
     <div className="pb-10">
@@ -32,7 +30,7 @@ function Home({ repositories, repositoriesCount }: { repositories: any; reposito
   );
 }
 
-export async function getServerSideProps({ req }: { req: any }) {
+export async function getServerSideProps({ req }: { req: GetServerSideProps }) {
   function convertUrlParameter(url: string) {
     if (url.includes("?")) {
       return {
