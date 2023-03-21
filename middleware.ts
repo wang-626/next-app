@@ -6,7 +6,7 @@ export async function middleware(request: NextRequest) {
     const response = NextResponse.next();
     return response;
   }
-  return NextResponse.redirect(new URL("/", request.url));
+  return NextResponse.redirect(new URL("/user/login", request.url));
 }
 
 export const config = {
