@@ -63,9 +63,14 @@ export class githubFetch {
         const res = await fetch(restfulEmailUrl, set);
         const emails = await res.json();
 
+        type email = {
+          email: string;
+          primary: boolean;
+        };
+
         if (emails) {
           // Sort by primary email - the user may have several emails, but only one of them will be primary
-          const sortedEmails = emails.sort((a: any, b: any) => b.primary - a.primary);
+          const sortedEmails = emails.sort((a: email, b: email) => Number(b.primary) - Number(a.primary));
           user.email = sortedEmails[0].email;
         }
       }

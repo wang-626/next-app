@@ -7,9 +7,13 @@ import { verifyLoginToken } from "lib/User";
 import Link from "next/link";
 import Pagination from "components/pagination";
 import queryString from "node:querystring";
-import { GetServerSideProps } from "next";
+import { GetServerSidePropsContext } from "next";
 
-function Home({ repositories, repositoriesCount }: { repositories: any; repositoriesCount: number }) {
+type repository = {
+  name: string;
+};
+
+function Home({ repositories, repositoriesCount }: { repositories: repository[]; repositoriesCount: number }) {
   const router = useRouter();
   return (
     <div className="pb-10">
@@ -30,7 +34,9 @@ function Home({ repositories, repositoriesCount }: { repositories: any; reposito
   );
 }
 
-export async function getServerSideProps({ req }: { req: GetServerSideProps }) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const { req } = context;
+
   function convertUrlParameter(url: string) {
     if (url.includes("?")) {
       return {
@@ -43,30 +49,33 @@ export async function getServerSideProps({ req }: { req: GetServerSideProps }) {
       params: null,
     };
   }
-  const { token } = verifyJtwCookie(req.cookies.loginToken);
-  const user = await verifyLoginToken(token);
-  const oauth = await fetchUserGithubOauth(user.id);
-  const githubApi = new githubFetch(oauth);
 
-  const { params } = convertUrlParameter(req.url!);
-  let cursor = null;
+  if (req.cookies.loginToken) {
+    const { token } = verifyJtwCookie(req.cookies.loginToken);
+    const user = await verifyLoginToken(token);
+    const oauth = await fetchUserGithubOauth(user.id);
+    const githubApi = new githubFetch(oauth);
 
-  if (params && params.page) {
-    cursor = await githubApi.getRepositoriesPageCursor({
-      page: Number(params.page),
-      count: 10,
-    });
-    const repositories = await githubApi.getRepositories({ after: cursor, count: 10 });
-    const repositoriesCount = await githubApi.getRepositoriesCount();
-    return {
-      props: { repositories: repositories, repositoriesCount: repositoriesCount },
-    };
-  } else {
-    const repositories = await githubApi.getRepositories({ count: 10 });
-    const repositoriesCount = await githubApi.getRepositoriesCount();
-    return {
-      props: { repositories: repositories, repositoriesCount: repositoriesCount },
-    };
+    const { params } = convertUrlParameter(req.url!);
+    let cursor = null;
+
+    if (params && params.page) {
+      cursor = await githubApi.getRepositoriesPageCursor({
+        page: Number(params.page),
+        count: 10,
+      });
+      const repositories = await githubApi.getRepositories({ after: cursor, count: 10 });
+      const repositoriesCount = await githubApi.getRepositoriesCount();
+      return {
+        props: { repositories: repositories, repositoriesCount: repositoriesCount },
+      };
+    } else {
+      const repositories = await githubApi.getRepositories({ count: 10 });
+      const repositoriesCount = await githubApi.getRepositoriesCount();
+      return {
+        props: { repositories: repositories, repositoriesCount: repositoriesCount },
+      };
+    }
   }
 }
 

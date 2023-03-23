@@ -5,13 +5,22 @@ interface Props {
   children?: ReactNode;
 }
 
-export const AuthContext = createContext({
-  authenticated: {},
-  setAuthenticated: (any: any) => {},
-});
+type user = {
+  name: string;
+  email: string;
+  password: string;
+};
+
+type Auth = {
+  authenticated: user | false;
+};
+
+let authenticated: user | false = false;
+
+export const AuthContext = createContext<Auth>({ authenticated: authenticated });
 
 export function AuthContextComponent({ children }: Props) {
-  const [authenticated, setAuthenticated] = useState(false);
+  const [authenticated, setAuthenticated] = useState<user | false>(false);
 
   const getApiData = async () => {
     const res = await fetch(window.location.origin + "/api/verifyLoginToken");
@@ -26,5 +35,5 @@ export function AuthContextComponent({ children }: Props) {
     getApiData();
   }, []);
 
-  return <AuthContext.Provider value={{ authenticated, setAuthenticated }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ authenticated }}>{children}</AuthContext.Provider>;
 }

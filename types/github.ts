@@ -1,3 +1,10 @@
+export type comment = {
+  id: string;
+  body: string;
+  author: {
+    login: string;
+  };
+};
 type id = {
   id: string;
 };
@@ -18,4 +25,17 @@ export type issueInput = id & Partial<issueInputArg>;
 export type commentInput = {
   id: string;
   body: string;
+};
+
+export type issue = {
+  id: string;
+  title: string;
+  number: string;
+  body: string;
+  author: {
+    login: string;
+  };
+  comments: {
+    nodes: comment[];
+  };
 };
