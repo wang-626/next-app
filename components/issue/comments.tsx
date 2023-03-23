@@ -1,19 +1,12 @@
 import Comment from "components/issue/comment";
-
-type comment = {
-  id: string;
-  body: string;
-  author: {
-    login: string;
-  };
-};
+import type { comment } from "types/github";
 
 export default function Comments({ comments }: { comments: comment[] }) {
   if (comments) {
     return (
       <div className="comments">
-        {comments.map((obj, i) => {
-          return <Comment key={i} comment={obj} />;
+        {comments.map((comment, i) => {
+          return <Comment key={i} comment={comment} />;
         })}
       </div>
     );

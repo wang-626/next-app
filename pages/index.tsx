@@ -6,7 +6,7 @@ import img from "public/github.svg";
 
 function Home() {
   const router = useRouter();
-  const { authenticated, setAuthenticated } = useContext(AuthContext);
+  const { authenticated } = useContext(AuthContext);
 
   function redirectGithub() {
     router.push("/github");
@@ -35,7 +35,6 @@ function Home() {
   return (
     <>
       <p>首頁</p>
-      <p>請先登入</p>
     </>
   );
 }

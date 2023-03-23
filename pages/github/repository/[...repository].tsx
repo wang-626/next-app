@@ -8,15 +8,15 @@ import Comments from "components/issue/comments";
 import IssueBody from "components/issue/issueBody";
 import IssueTitle from "components/issue/issueTitle";
 import New from "components/issues/new";
-import Pagination from "components/issues/pagination";
+import Pagination from "components/pagination";
 import { isNumeric, removeUrlParameter } from "lib/function";
 import Link from "next/link";
-import { issueStates } from "types/github";
 import queryString from "node:querystring";
+import type { issue, issueStates } from "types/github";
 
 type data = {
-  issue?: any;
-  issues?: any;
+  issue: issue;
+  issues?: issue[];
   issueCount?: number;
 };
 
@@ -74,12 +74,12 @@ export default function Repository({ data }: { data: data }) {
         </div>
         <div className="flex justify-between py-4 ">
           <h1 className="my-auto text-2xl text-primary">{repository![0]}&nbsp;&nbsp;issue列表</h1>
-          <button onClick={newIssue} className="btn btn-success rounded-md">
+          <button onClick={newIssue} className="btn-success btn rounded-md">
             New issue
           </button>
         </div>
-        <Issues issues={data.issues} />
-        <Pagination issueCount={data.issueCount!} router={router} />
+        <Issues issues={data.issues!} />
+        <Pagination count={data.issueCount!} router={router} />
       </div>
     );
   }

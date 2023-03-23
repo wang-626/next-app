@@ -4,9 +4,8 @@ import { AuthContext } from "lib/context/auth";
 import Link from "next/link";
 
 export default function Header() {
-  const { authenticated, setAuthenticated }: { authenticated: any; setAuthenticated: any } = useContext(AuthContext);
+  const { authenticated } = useContext(AuthContext);
   const router = useRouter();
-  const status = "";
 
   function loginRedirect() {
     router.push("/user/login");

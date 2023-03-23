@@ -45,5 +45,5 @@ export default async function Auth(severReq: NextApiRequest, severRes: NextApiRe
     githubApi.updateComment(input);
   }
 
-  severRes.status(200).json({ result: "test" });
+  severRes.status(200).json({ result: true });
 }
