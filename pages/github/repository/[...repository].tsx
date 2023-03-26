@@ -56,7 +56,24 @@ export default function Repository({ data }: { data: data }) {
       </div>
     );
   } else if (removeUrlParameter(router.asPath).slice(-3) === "new") {
-    return <New />;
+    return (
+      <div className="pb-10">
+        <div className="breadcrumbs text-sm">
+          <ul>
+            <li>
+              <Link href="/"> 首頁</Link>
+            </li>
+            <li>
+              <Link href="/github">儲存庫列表</Link>
+            </li>
+            <li>
+              <p>{repository![0]}&nbsp;&nbsp;new</p>
+            </li>
+          </ul>
+        </div>
+        <New />
+      </div>
+    );
   } else {
     return (
       <div className="pb-10">
