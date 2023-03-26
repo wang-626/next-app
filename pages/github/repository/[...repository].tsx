@@ -149,7 +149,7 @@ export async function getServerSideProps({ req }: { req: any }) {
         };
       }
     } else {
-      repository = params!.repository! as string;
+      repository = urlArr[urlArr.length - 1].slice(0, -5);
       let state: issueStates = issueStates.OPEN;
       if (params!.state) {
         state = issueStates[params!.state as keyof typeof issueStates];
