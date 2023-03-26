@@ -103,8 +103,7 @@ export default function Repository({ data }: { data: data }) {
   }
 }
 
-export async function getServerSideProps({ req, res }: { req: any; res: any }) {
-  res.setHeader("Cache-Control", "public, s-maxage=10, stale-while-revalidate=59");
+export async function getServerSideProps({ req }: { req: any }) {
   function convertUrlParameter(url: string) {
     if (url.includes("?")) {
       return {
@@ -134,12 +133,6 @@ export async function getServerSideProps({ req, res }: { req: any; res: any }) {
         repository = params.repository[0];
         const issueNumber = params.repository[1];
         const issue = await githubApi.getIssue({ repository: repository, number: issueNumber });
-
-        if (issue === null) {
-          return {
-            notFound: true,
-          };
-        }
 
         return {
           props: { data: { issue: issue } },
