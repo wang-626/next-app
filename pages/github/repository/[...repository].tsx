@@ -129,7 +129,7 @@ export async function getServerSideProps({ req }: { req: any }) {
     // Array.isArray 從new redirect回來會有 params.repository
     if (params && params.repository && Array.isArray(params.repository)) {
       // params.repository[1]是數字 則查詢issue 不是數字代表是new 新issue
-      if (isNumeric(params.repository[1])) {        
+      if (isNumeric(params.repository[1])) {
         repository = params.repository[0];
         const issueNumber = params.repository[1];
         const issue = await githubApi.getIssue({ repository: repository, number: issueNumber });
@@ -149,8 +149,7 @@ export async function getServerSideProps({ req }: { req: any }) {
         };
       }
     } else {
-      console.log(params);
-      repository = params!.repository! as string;
+      repository = urlArr[urlArr.length - 1].slice(0, -5);
       let state: issueStates = issueStates.OPEN;
       if (params!.state) {
         state = issueStates[params!.state as keyof typeof issueStates];
@@ -167,6 +166,12 @@ export async function getServerSideProps({ req }: { req: any }) {
 
       const issues = await githubApi.getIssues({ repository: repository, state: state, after: cursor });
       const issueCount = await githubApi.getIssueCount({ repository: repository, state: state });
+
+      if (issues === null) {
+        return {
+          notFound: true,
+        };
+      }
 
       return {
         props: { data: { issues: issues, issueCount: issueCount } },
