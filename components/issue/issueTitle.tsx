@@ -52,16 +52,16 @@ export default function IssueTitle({ issue }: { issue: issue }) {
         type="text"
         value={value}
         onChange={change}
-        className={`my-auto rounded-md px-2 text-2xl text-primary ${editDisplay}`}
+        className={`my-auto mr-4 grow rounded-md pl-2 text-2xl text-primary outline outline-2 ${editDisplay}`}
       />
-      <button onClick={edit} className={`btn btn-success rounded-md ${textDisplay}`}>
+      <button onClick={edit} className={`btn-success btn rounded-md ${textDisplay}`}>
         edit
       </button>
       <div className={`${editDisplay}`}>
-        <button onClick={save} className="btn btn-success rounded-md">
+        <button onClick={save} className="btn-success btn mr-2 rounded-md">
           save
         </button>
-        <button onClick={cancel} className="btn btn-error rounded-md">
+        <button onClick={cancel} className="btn-error btn rounded-md">
           Cancel
         </button>
       </div>
