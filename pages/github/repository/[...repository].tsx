@@ -12,7 +12,8 @@ import Pagination from "components/pagination";
 import { isNumeric, removeUrlParameter } from "lib/function";
 import Link from "next/link";
 import queryString from "node:querystring";
-import type { issue, issueStates } from "types/github";
+import type { issue } from "types/github";
+import { issueStates } from "types/github";
 
 type data = {
   issue: issue;
