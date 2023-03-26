@@ -23,7 +23,7 @@ export default function IssueBody({ id, body, author }: { id: string; body: stri
       },
     };
     const set = fetchSet({ body });
-    const res = await fetch((process.env.SERVER_URL || "http://127.0.0.1:3000") + "/api/github", set);
+    const res = await fetch(window.location.origin + "/api/github", set);
     const data = await res.json();
 
     setTextDisplay("block");
