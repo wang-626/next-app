@@ -12,6 +12,7 @@ export default async function Auth(severReq: NextApiRequest, severRes: NextApiRe
   const githubApi = new githubFetch(oauth);
 
   if (severReq.body.type === "issue") {
+    console.log(severReq.body.data);
     const input: issueInput = { id: severReq.body.data.id };
     if (severReq.body.data.title) {
       input["title"] = severReq.body.data.title;

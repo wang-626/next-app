@@ -328,6 +328,7 @@ export class githubFetch {
     try {
       const res = await fetch(graphqlUrl, set);
       const json = await res.json();
+      console.log(json);
       return json.data.updateIssue.actor.login;
     } catch {
       return null;
