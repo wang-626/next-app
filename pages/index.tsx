@@ -25,7 +25,7 @@ function Home() {
           </figure>
           <div className="card-body">
             <h2 className="card-title">Github API</h2>
-            <p>操控你的儲存庫issue，透過github graphql 實現</p>
+            <p>操控你的儲存庫issue，透過Github GraphQL 實現</p>
             <div className="card-actions justify-end">
               <button onClick={redirectGithub} className="btn-primary btn">
                 Go
@@ -46,7 +46,7 @@ function Home() {
           </figure>
           <div className="card-body">
             <h2 className="card-title">Github API</h2>
-            <p>操控你的儲存庫issue，透過github graphql 實現</p>
+            <p>操控你的儲存庫issue，透過Github GraphQL 實現</p>
             <div className="card-actions justify-end">
               <button onClick={redirectLogin} className="btn-primary btn">
                 sing in
