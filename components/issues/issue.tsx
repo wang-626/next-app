@@ -28,7 +28,7 @@ export default function Issue({ issue }: { issue: issue }) {
     };
     const set = fetchSet({ body });
     const res = await fetch(window.location.origin + "/api/github", set);
-    const data = await res.json();
+    window.location.reload();
   }
 
   return (
