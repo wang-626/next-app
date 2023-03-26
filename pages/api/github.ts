@@ -22,7 +22,7 @@ export default async function Auth(severReq: NextApiRequest, severRes: NextApiRe
     if (severReq.body.data.state) {
       input["state"] = severReq.body.data.state;
     }
-    githubApi.updateIssue(input);
+    await githubApi.updateIssue(input);
   }
 
   if (severReq.body.type === "issueNew") {
@@ -36,13 +36,13 @@ export default async function Auth(severReq: NextApiRequest, severRes: NextApiRe
       if (severReq.body.data.body) {
         input["body"] = severReq.body.data.body;
       }
-      githubApi.createIssue(input);
+      await githubApi.createIssue(input);
     }
   }
 
   if (severReq.body.type === "comment") {
     const input: commentInput = { id: severReq.body.data.id, body: severReq.body.data.body };
-    githubApi.updateComment(input);
+    await githubApi.updateComment(input);
   }
 
   severRes.status(200).json({ result: true });
