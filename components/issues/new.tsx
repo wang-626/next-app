@@ -23,7 +23,7 @@ export default function New() {
       },
     };
     const set = fetchSet({ body });
-    const res = await fetch((process.env.SERVER_URL || "http://127.0.0.1:3000") + "/api/github", set);
+    const res = await fetch(window.location.origin + "/api/github", set);
     router.push(`/github/repository/${repository}`);
   }
 
@@ -34,6 +34,7 @@ export default function New() {
 
   return (
     <div className="pt-5">
+      <h1 className="my-auto py-4 text-2xl text-primary">{repository}</h1>
       <div className="border-Stone-100 rounded-md border-2 bg-white p-5 ">
         <form onSubmit={update}>
           <input
