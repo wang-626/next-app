@@ -103,7 +103,7 @@ export default function Repository({ data }: { data: data }) {
   }
 }
 
-export async function getServerSideProps({ req: res }: { req: any; res: any }) {
+export async function getServerSideProps({ req, res }: { req: any; res: any }) {
   res.setHeader("Cache-Control", "public, s-maxage=10, stale-while-revalidate=59");
   function convertUrlParameter(url: string) {
     if (url.includes("?")) {
