@@ -1,3 +1,8 @@
+/**
+@param  method default is POST
+@param  header default is Accept: "application/json","Content-Type": "application/json",
+@param  body default is null
+ */
 export function fetchSet({
   method = "POST",
   header = {
