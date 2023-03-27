@@ -15,7 +15,7 @@ export default function Header({ href }: { href: string }) {
     };
     const set = fetchSet({ body });
     try {
-      const res = await fetch(`${process.env.SERVER_URL || "http://127.0.0.1:3000"}/api/login`, set);
+      const res = await fetch(window.location.origin + "/api/github", set);
       const data = await res.json();
       if (data.result) {
         const url = new URL(window.location.href);

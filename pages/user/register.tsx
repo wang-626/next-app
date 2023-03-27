@@ -27,7 +27,7 @@ export default function Register() {
     const set = fetchSet({ body });
 
     try {
-      const res = await fetch(`${process.env.SERVER_URL || "http://127.0.0.1:3000"}/api/register`, set);
+      const res = await fetch(window.location.origin + "/api/github", set);
       const json = await res.json();
       if (json.result) {
         const url = new URL(window.location.href);
